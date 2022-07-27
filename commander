@@ -1,0 +1,10 @@
+import re
+import os
+import db
+import discord
+
+class bot:
+
+    def __init__(self, client: discord.Client, default_prefix="&"):
+        self.client = client
+        self.default_prefix = default_prefix
