@@ -3,8 +3,22 @@ import os
 import discord
 import prefix
         
+# use importlib
 
-class bot:
+class Bot:
+
+    bots = dict()
+
+    @classmethod
+    def create(cls, key, *args, **kwargs):
+        cls.bots[key] = mybot = MyBot(*args, **kwargs)
+        return mybot
+
+    @classmethod
+    def connect(cls, key):
+        return cls.bots[key]: MyBot
+
+class MyBot:
 
     def __init__(self, client: discord.Client, bot_prefix):
         self.client = client
