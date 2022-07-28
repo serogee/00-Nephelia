@@ -1,10 +1,18 @@
 import re
 import os
-import db
 import discord
+import prefix
+        
 
 class bot:
 
-    def __init__(self, client: discord.Client, default_prefix="&"):
+    def __init__(self, client: discord.Client, bot_prefix):
         self.client = client
-        self.default_prefix = default_prefix
+        if type(bot_prefix) is str:
+            self.get_prefix = lambda message: bot_prefix
+        elif callable(bot_prefix):
+            self.get_prefix = bot_prefix
+        else:
+            raise TypeError("Given bot_prefix is neither a string object nor a callable")
+        
+    
