@@ -159,7 +159,7 @@ class MyBot:
             raise TypeError("Given bot_prefix is neither a string object nor a callable")
         self.clusters = list()
 
-    def cluster(self, name *args, **kwargs) -> Cluster:
+    def cluster(self, name, *args, **kwargs) -> Cluster:
         for cluster in self.clusters:
             if cluster == name: return cluster
         cluster = Cluster(self, name, *args, **kwargs)
