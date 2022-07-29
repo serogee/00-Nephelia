@@ -17,8 +17,7 @@ def set_default(prefix: str):
 def get_prefix(message):
     if (mgid := message.guild.id) in cached_prefix:
         return cached_prefix[mgid]
-    else:
-        return default_prefix
+    return default_prefix
 
 def set_prefix(guild_id, prefix: str):
     if prefix == default_prefix:
