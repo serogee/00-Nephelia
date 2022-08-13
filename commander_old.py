@@ -78,7 +78,6 @@ class Command:
             if ignore_case: = re.sub(r"([a-zA-Z])", anycase, trigger)
             regex.append(trigger)
         self.triggers_regex = fr"{'|'.join(regex)}"
-        self.pattern = re.compile(fr"^[ \n]*({self.triggers_regex})([^ \t\n\u200b]+)?(?:[ \t\n\u200b]+(.+)?)?$", re.DOTALL)
 
     def embed(self, prefix) -> discord.Embed:
         """Returns the help information of a command as a discord.Embed"""
@@ -125,18 +124,18 @@ class Cluster:
         content = message.content
 
         if (prefixed := content.startswith(p)):
-            content = content.replace(p, "")
+            n = len(p)
         else:
             mention = f"<@{self.client.user.id}>"
             if content.startswith(mention):
-                content = content.replace(mention, "")
+                n = len(mention)
             else: return
 
         for command in self.commands:
             if not prefixed: #guards if content doesn't start with prefix
                 if not command.mention_as_prefix: #skips command if not mention_as_prefix
                     continue
-            match = command.pattern(content)
+            match = re.search(rf"^.{{{n}}}[ \n]*({command.triggers_regex})([^ \t\n\u200b]+)?(?:[ \t\n\u200b]+(.+)?)?$", content, re.DOTALL)
             if match:
                 asyncio.create_task(command.traceback(
                     Context(message, p, match.group(1), match.group(2), command),
@@ -159,7 +158,7 @@ class MyBot:
             raise TypeError("Given bot_prefix is neither a string object nor a callable")
         self.clusters = list()
 
-    def cluster(self, name, *args, **kwargs) -> Cluster:
+    def cluster(self, name *args, **kwargs) -> Cluster:
         for cluster in self.clusters:
             if cluster == name: return cluster
         cluster = Cluster(self, name, *args, **kwargs)
@@ -171,11 +170,11 @@ class MyBot:
         content = message.content
 
         if (prefixed := content.startswith(p)):
-            content = content.replace(p, "")
+            n = len(p)
         else:
             mention = f"<@{self.client.user.id}>"
             if content.startswith(mention):
-                content = content.replace(mention, "")
+                n = len(mention)
             else: return
 
         for cluster in self.clusters:
@@ -183,7 +182,7 @@ class MyBot:
                 if not prefixed: #guards if content doesn't start with prefix
                     if not command.mention_as_prefix: #skips command if not mention_as_prefix
                         continue
-                match = command.pattern(content)
+                match = re.search(rf"^.{{{n}}}[ \n]*({command.triggers_regex})([^ \t\n\u200b]+)?(?:[ \t\n\u200b]+(.+)?)?$", content, re.DOTALL)
                 if match:
                     asyncio.create_task(command.traceback(
                         Context(message, p, match.group(1), match.group(2), command),
