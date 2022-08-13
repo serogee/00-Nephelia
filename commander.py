@@ -73,9 +73,10 @@ class Command:
         def anycase(mat):
             group1 = mat.group(1)
             return f"[{group1.lower()}{group1.upper()}]"
-        for trigger in (self.trigger := [name] + aliases):
+        self.triggers = [name] + aliases
+        for trigger in self.triggers:
             trigger = re.sub(r"([\W])", r"\\\1", trigger)
-            if ignore_case: = re.sub(r"([a-zA-Z])", anycase, trigger)
+            if ignore_case: regex = re.sub(r"([a-zA-Z])", anycase, trigger)
             regex.append(trigger)
         self.triggers_regex = fr"{'|'.join(regex)}"
         self.pattern = re.compile(fr"^[ \n]*({self.triggers_regex})([^ \t\n\u200b]+)?(?:[ \t\n\u200b]+(.+)?)?$", re.DOTALL)
@@ -152,7 +153,7 @@ class MyBot:
     def __init__(self, client: discord.Client, bot_prefix) -> None:
         self.client = client
         if type(bot_prefix) is str:
-            self.get_prefix = lambda message: bot_prefix
+            self.get_prefix = lambda _: bot_prefix
         elif callable(bot_prefix):
             self.get_prefix = bot_prefix
         else:
@@ -190,20 +191,16 @@ class MyBot:
                         match.group(3)
                     ))
 
-
-
-class Bot: 
-
+class Bot:
     bots = dict()
 
     @classmethod
-    def create(cls, key, *args, **kwargs) -> MyBot:
+    def create(cls, key="__default", *args, **kwargs) -> MyBot:
         if key in cls.bots:
             raise KeyError("Key already taken")
         cls.bots[key] = mybot = MyBot(*args, **kwargs)
         return mybot
 
     @classmethod
-    def connect(cls, key) -> MyBot:
+    def connect(cls, key="__default") -> MyBot:
         return cls.bots[key]
-

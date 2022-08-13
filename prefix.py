@@ -1,6 +1,6 @@
 import db
 
-conn = db.connect("database/settings.sql")
+conn = db.connect("database/settings.db")
 cur = conn.cursor()
 cur.execute("""
     SELECT server_id, bot_prefix FROM server_settings
@@ -31,7 +31,7 @@ def set_prefix(guild_id, prefix: str):
     cur.execute("""
         INSERT OR IGNORE INTO server_settings (prefix)
         VALUES (?)
-    """, (prefix))
+    """, (prefix,))
     
     if prefix is None:
         del cached_prefix[guild_id]
