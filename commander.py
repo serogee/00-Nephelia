@@ -76,7 +76,7 @@ class Command:
         self.triggers = [name] + aliases
         for trigger in self.triggers:
             trigger = re.sub(r"([\W])", r"\\\1", trigger)
-            if ignore_case: regex = re.sub(r"([a-zA-Z])", anycase, trigger)
+            if ignore_case: trigger = re.sub(r"([a-zA-Z])", anycase, trigger)
             regex.append(trigger)
         self.triggers_regex = fr"{'|'.join(regex)}"
         self.pattern = re.compile(fr"^[ \n]*({self.triggers_regex})([^ \t\n\u200b]+)?(?:[ \t\n\u200b]+(.+)?)?$", re.DOTALL)
