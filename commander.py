@@ -126,11 +126,11 @@ class Cluster:
         content = message.content
 
         if (prefixed := content.startswith(p)):
-            content = content.replace(p, "")
+            content = content.replace(p, "", 1)
         else:
             mention = f"<@{self.client.user.id}>"
             if content.startswith(mention):
-                content = content.replace(mention, "")
+                content = content.replace(mention, "", 1)
             else: return
 
         for command in self.commands:
